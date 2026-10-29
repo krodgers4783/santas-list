@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Santa's List</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Santa's List">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#13462d">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22Santa%27s%20List%22%2C%20%22short_name%22%3A%20%22Santa%27s%20List%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%2313462d%22%2C%20%22theme_color%22%3A%20%22%2313462d%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22apple-touch-icon.png%22%2C%20%22sizes%22%3A%20%22180x180%22%2C%20%22type%22%3A%20%22image/png%22%7D%5D%7D">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px;font-family:system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+img{max-width:100%} [hidden]{display:none!important}
+html{background:#13462d}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: green header band with Santa's cookie table, candy-cane progress, then one card per person (2 cols when wide) */
+:root{
+  --bg:#f2f6f1; --paper:#ffffff; --ink:#1c2a21; --muted:#5a6b60; --line:#d5e0d7;
+  --red:#c8102e; --red-ink:#ffffff; --green:#1d6a42; --gold:#c9951a;
+  --hdr:#13462d; --hdr-ink:#f7fbf7; --hdr-soft:#a9cdb6; --stripe:#ffffff;
+  --skin:#f3caa9; --beard:#ffffff; --cookie:#cf8f4f; --chip:#4a2b16; --plate:#f4f1ec;
+  --shadow:0 1px 2px rgba(20,50,30,.08),0 6px 18px rgba(20,50,30,.06);
+  --display:"Berkshire Swash",Georgia,"Times New Roman",serif;
+  --body:"Nunito",-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1a13; --paper:#152a1e; --ink:#edf3ee; --muted:#9db2a5; --line:#28402f;
+  --red:#e23a4f; --red-ink:#ffffff; --green:#45ad74; --gold:#e7b63c;
+  --hdr:#0a2b1b; --hdr-ink:#f2f8f3; --hdr-soft:#8fbba0; --stripe:#f7f2f2;
+  --plate:#e9e4dc; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1a13; --paper:#152a1e; --ink:#edf3ee; --muted:#9db2a5; --line:#28402f;
+  --red:#e23a4f; --red-ink:#ffffff; --green:#45ad74; --gold:#e7b63c;
+  --hdr:#0a2b1b; --hdr-ink:#f2f8f3; --hdr-soft:#8fbba0; --stripe:#f7f2f2;
+  --plate:#e9e4dc; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.25); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--hdr)}
+.wrap{max-width:780px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Header */
+header{background:var(--hdr);color:var(--hdr-ink);position:relative;overflow:hidden}
+header .wrap{padding-block:18px 0;display:flex;flex-direction:column;gap:6px}
+.snow{position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(circle,var(--hdr-ink) 1.2px,transparent 1.6px),radial-gradient(circle,var(--hdr-ink) .8px,transparent 1.2px);
+  background-size:46px 46px,29px 29px;background-position:0 0,13px 17px;animation:snow 14s linear infinite}
+@keyframes snow{to{background-position:0 460px,13px 307px}}
+.titlerow{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,8vw,46px);line-height:1.05;margin:0;text-wrap:balance}
+h1 small{display:block;font-family:var(--body);font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--hdr-soft);margin-bottom:4px}
+.cane{width:84px;height:84px;flex:none}
+.scene{position:relative;width:100%;max-width:440px;align-self:center}
+.scene svg{display:block;width:100%;height:auto}
+.caption{position:relative;text-align:center;font-weight:700;color:var(--hdr-soft);font-size:15px;padding-bottom:16px;min-height:2.6em;text-wrap:balance}
+
+/* Progress */
+.progress{background:var(--paper);border-radius:18px;box-shadow:var(--shadow);padding:16px 16px 18px;margin-top:-6px;position:relative;display:flex;flex-direction:column;gap:10px}
+.prow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.big{font-family:var(--display);font-size:26px;line-height:1;color:var(--red)}
+.pmeta{font-size:14px;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+.bar{position:relative;height:22px;border-radius:11px;background:var(--bg);border:2px solid var(--line);overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:9px;transition:width .6s cubic-bezier(.3,1.3,.5,1);
+  background:repeating-linear-gradient(-45deg,var(--red) 0 10px,var(--stripe) 10px 20px);background-size:28.3px 28.3px;animation:march 1.2s linear infinite}
+@keyframes march{to{background-position:28.3px 0}}
+.bar.full .fill{background:repeating-linear-gradient(-45deg,var(--green) 0 10px,var(--stripe) 10px 20px);background-size:28.3px 28.3px}
+
+/* Sections */
+main .wrap{padding-block:18px 40px;display:flex;flex-direction:column;gap:22px}
+h2{font-family:var(--display);font-weight:400;font-size:26px;margin:0;color:var(--green);display:flex;align-items:center;gap:10px}
+h2::after{content:"";flex:1;height:6px;border-radius:3px;background:repeating-linear-gradient(-45deg,var(--red) 0 6px,transparent 6px 12px);opacity:.55}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.section{display:flex;flex-direction:column;gap:12px}
+
+.card{background:var(--paper);border-radius:16px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0;border:2px solid transparent;transition:border-color .3s}
+.card.done{border-color:var(--green)}
+.chead{display:flex;align-items:center;gap:8px}
+.cname{font-family:var(--display);font-size:24px;line-height:1.1;flex:1;min-width:0;overflow-wrap:anywhere}
+.count{font-size:13px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+.pill{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--red-ink);padding:3px 9px;border-radius:999px;
+  background:repeating-linear-gradient(-45deg,var(--red) 0 7px,#e0596b 7px 14px);text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.pill.wait{background:var(--bg);color:var(--muted);text-shadow:none;border:1px solid var(--line)}
+
+ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+li{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+li:last-child{border-bottom:0}
+.check{flex:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .15s}
+.check svg{width:16px;height:16px;opacity:0;transform:scale(.4);transition:all .2s}
+.check[aria-checked="true"]{border-color:var(--red);background:repeating-linear-gradient(-45deg,var(--red) 0 5px,#e0596b 5px 10px)}
+.check[aria-checked="true"] svg{opacity:1;transform:scale(1)}
+.check:active{transform:scale(.9)}
+.gtext{flex:1;min-width:0;overflow-wrap:anywhere}
+li.got .gtext{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:var(--muted)}
+.yearly{flex:none;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 8px;cursor:pointer;
+  border:1px dashed var(--line);background:transparent;color:var(--muted)}
+.yearly[aria-pressed="true"]{border:1px solid var(--gold);color:var(--gold)}
+.x{flex:none;width:28px;height:28px;border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;border-radius:8px}
+.x:hover{color:var(--red);background:var(--bg)}
+.empty{color:var(--muted);font-size:14px;font-style:italic;padding:4px 0}
+
+.add{display:flex;gap:8px}
+.add input,.addp input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.add input:focus,.addp input:focus{outline:none;border-color:var(--green)}
+.btn{font:inherit;font-weight:800;font-size:15px;border:0;border-radius:10px;padding:9px 14px;cursor:pointer;background:var(--green);color:#fff}
+.btn.red{background:var(--red);color:var(--red-ink)}
+.btn.ghost{background:transparent;color:var(--muted);border:2px solid var(--line)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.rm{align-self:flex-end;font-size:13px;font-weight:700;color:var(--muted);background:none;border:0;cursor:pointer;padding:2px 0;text-decoration:underline}
+.addp{display:flex;gap:8px;background:var(--paper);border-radius:16px;box-shadow:var(--shadow);padding:12px}
+
+/* Alternating red / green cards (checkerboard when two columns) */
+:root{--card-red:#b8112c;--card-red-2:#d23048;--card-green:#1a6140;--card-green-2:#2a7d55;--on-card:#ffffff;--on-card-soft:rgba(255,255,255,.72);--on-card-line:rgba(255,255,255,.3)}
+.grid .card{--cbg:var(--card-red);--cbg2:var(--card-red-2);color:var(--on-card);border:0;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 92% 8%,var(--cbg2) 0 46px,transparent 47px),var(--cbg);padding-top:20px}
+.grid .card::before{content:"";position:absolute;inset:0 0 auto;height:8px;
+  background:repeating-linear-gradient(-45deg,#ffffff 0 8px,var(--cbg2) 8px 16px)}
+.grid .card:nth-child(even){--cbg:var(--card-green);--cbg2:var(--card-green-2)}
+@media (min-width:640px){
+  .grid .card:nth-child(4n+3){--cbg:var(--card-green);--cbg2:var(--card-green-2)}
+  .grid .card:nth-child(4n+4){--cbg:var(--card-red);--cbg2:var(--card-red-2)}
+}
+.grid .card.done{box-shadow:0 0 0 3px var(--gold),var(--shadow)}
+.grid .card .count,.grid .card .gtext{color:var(--on-card)}
+.grid .card .count{color:var(--on-card-soft)}
+.grid .card li{border-bottom-color:var(--on-card-line)}
+.grid .card li.got .gtext{color:var(--on-card-soft);text-decoration-color:#ffffff}
+.grid .card .empty,.grid .card .rm{color:var(--on-card-soft)}
+.grid .card .check{background:transparent;border-color:rgba(255,255,255,.75)}
+.grid .card .check[aria-checked="true"]{border-color:#ffffff;background:#ffffff}
+.grid .card .check[aria-checked="true"] path{stroke:var(--cbg)}
+.grid .card .yearly{color:var(--on-card-soft);border-color:var(--on-card-line)}
+.grid .card .yearly[aria-pressed="true"]{color:#ffe08a;border-color:#ffe08a}
+.grid .card .x{color:var(--on-card-soft)}
+.grid .card .x:hover{color:#ffffff;background:rgba(255,255,255,.15)}
+.grid .card .pill{background:#ffe08a;color:#3a2a00;text-shadow:none}
+.grid .card .add input{background:rgba(255,255,255,.14);border-color:var(--on-card-line);color:var(--on-card)}
+.grid .card .add input::placeholder{color:var(--on-card-soft)}
+.grid .card .add input:focus{border-color:#ffffff}
+.grid .card .btn{background:#ffffff;color:var(--cbg)}
+.grid .card .btn.ghost{background:transparent;color:#ffffff;border-color:var(--on-card-line)}
+.grid .card .btn.red{background:#ffe08a;color:#3a2a00}
+
+.reset{display:flex;flex-direction:column;gap:10px;align-items:flex-start;border-top:2px dashed var(--line);padding-top:18px;font-size:14px;color:var(--muted)}
+.reset .row{display:flex;gap:8px;flex-wrap:wrap}
+.loading{color:var(--muted);text-align:center;padding:30px 0;font-weight:700}
+
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);background:var(--hdr);color:var(--hdr-ink);
+  padding:12px 18px;border-radius:14px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .35s cubic-bezier(.3,1.4,.5,1);z-index:20;max-width:calc(100% - 32px);text-align:center}
+.toast.show{transform:translate(-50%,0)}
+
+/* Santa animation */
+#santa .eyesShut,#santa .zz,#santa .sleepMouth{opacity:0}
+#santa #head{transform-box:view-box;transform-origin:150px 120px;transition:transform .8s ease}
+#bite{opacity:0;transform-box:view-box;transform-origin:150px 122px}
+#santa.eating #bite{animation:bring 2.6s ease forwards}
+@keyframes bring{0%{opacity:1;transform:translate(110px,62px) scale(.6)}22%{opacity:1;transform:translate(0,0) scale(1)}80%{opacity:1;transform:translate(0,0) scale(1)}90%,100%{opacity:0;transform:translate(0,0) scale(1)}}
+#biteMask circle{opacity:0}
+#santa.eating .b1{animation:bitein 2.6s steps(1) forwards;animation-delay:.75s}
+#santa.eating .b2{animation:bitein 2.6s steps(1) forwards;animation-delay:1.2s}
+#santa.eating .b3{animation:bitein 2.6s steps(1) forwards;animation-delay:1.65s}
+#santa.eating .b4{animation:bitein 2.6s steps(1) forwards;animation-delay:2.05s}
+@keyframes bitein{to{opacity:1}}
+#mouth{transform-box:fill-box;transform-origin:center}
+#santa.eating #mouth{animation:chomp .45s ease-in-out 5 .6s}
+@keyframes chomp{50%{transform:scaleY(2.4)}}
+.crumb{opacity:0}
+#santa.eating .crumb{animation:crumb 1.4s ease-in forwards;animation-delay:var(--d)}
+@keyframes crumb{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--x),46px)}}
+#santa.napping #head{transform:rotate(14deg)}
+#santa.napping .eyesOpen,#santa.napping #mouth{opacity:0}
+#santa.napping .eyesShut,#santa.napping .sleepMouth{opacity:1}
+#santa.napping .zz{animation:zz 3s ease-in-out infinite}
+#santa.napping .zz:nth-of-type(2){animation-delay:1s}
+#santa.napping .zz:nth-of-type(3){animation-delay:2s}
+@keyframes zz{0%{opacity:0;transform:translate(0,8px)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-16px)}}
+#santa.napping #belly{animation:breathe 3s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom}
+@keyframes breathe{50%{transform:scaleY(1.04)}}
+@media (prefers-reduced-motion:reduce){.snow,.fill{animation:none}#santa.napping .zz{animation:none;opacity:1}#santa.napping #belly{animation:none}}
+</style>
+</head>
+<body>
+
+
+<header>
+  <div class="snow"></div>
+  <div class="wrap">
+    <div class="titlerow">
+      <h1><small>Katharine's Christmas shopping</small>Santa's List</h1>
+      <svg class="cane" viewBox="0 0 90 90" aria-hidden="true">
+        <defs>
+          <pattern id="caneStripe" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+            <rect width="9" height="9" fill="#ffffff"/>
+            <rect width="4" height="9" fill="#d5122f"/>
+          </pattern>
+          <g id="oneCane">
+            <path d="M0 34 V-24 a11 11 0 0 1 22 0 v6" fill="none" stroke="#7a0c1d" stroke-width="11" stroke-linecap="round" opacity=".35"/>
+            <path d="M0 34 V-24 a11 11 0 0 1 22 0 v6" fill="none" stroke="url(#caneStripe)" stroke-width="9" stroke-linecap="round"/>
+            <path d="M-2 30 V-24 a13 13 0 0 1 6 -10" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>
+          </g>
+        </defs>
+        <use href="#oneCane" transform="translate(45 50) rotate(-24) scale(-1 1)"/>
+        <use href="#oneCane" transform="translate(45 50) rotate(24)"/>
+        <g transform="translate(45 52)">
+          <path d="M0 0 L-13 -8 Q-16 0 -13 8 Z" fill="#2f9a5f"/>
+          <path d="M0 0 L13 -8 Q16 0 13 8 Z" fill="#2f9a5f"/>
+          <path d="M-1 2 L-6 14 M1 2 L6 14" stroke="#2f9a5f" stroke-width="3" stroke-linecap="round"/>
+          <circle r="4" fill="#e7b63c"/>
+        </g>
+      </svg>
+    </div>
+    <div class="scene">
+      <svg id="santa" viewBox="0 0 340 214" role="img" aria-label="Santa at a table with a plate of cookies">
+        <defs>
+          <mask id="biteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="340" height="214">
+            <rect x="0" y="0" width="340" height="214" fill="#fff"/>
+            <circle class="b1" cx="164" cy="112" r="8" fill="#000"/>
+            <circle class="b2" cx="138" cy="114" r="8" fill="#000"/>
+            <circle class="b3" cx="160" cy="132" r="9" fill="#000"/>
+            <circle class="b4" cx="150" cy="122" r="16" fill="#000"/>
+          </mask>
+        </defs>
+        <!-- table -->
+        <rect x="200" y="192" width="140" height="22" rx="4" fill="#7a4a2a"/>
+        <rect x="196" y="188" width="148" height="8" rx="4" fill="#94603a"/>
+        <!-- milk -->
+        <rect x="306" y="150" width="20" height="38" rx="4" fill="#ffffff" opacity=".92"/>
+        <rect x="306" y="150" width="20" height="8" rx="3" fill="#dfe8f0"/>
+        <!-- plate -->
+        <ellipse cx="258" cy="186" rx="50" ry="8" fill="var(--plate)" stroke="#c9c2b7" stroke-width="1.5"/>
+        <g id="plate"></g>
+        <!-- santa body -->
+        <g id="belly">
+          <path d="M92 214 V168 Q92 128 150 128 Q208 128 208 168 V214 Z" fill="#c8102e"/>
+          <rect x="144" y="130" width="12" height="84" fill="#ffffff"/>
+          <rect x="92" y="176" width="116" height="13" fill="#222"/>
+          <rect x="140" y="173" width="20" height="19" rx="3" fill="none" stroke="#e7b63c" stroke-width="3.5"/>
+        </g>
+        <ellipse cx="96" cy="170" rx="13" ry="30" fill="#b00d27" transform="rotate(14 96 170)"/>
+        <ellipse cx="204" cy="168" rx="13" ry="28" fill="#b00d27" transform="rotate(-36 204 168)"/>
+        <circle cx="219" cy="186" r="9" fill="#1d5c3a"/>
+        <circle cx="88" cy="198" r="9" fill="#1d5c3a"/>
+        <!-- head -->
+        <g id="head">
+          <circle cx="150" cy="92" r="30" fill="var(--skin)"/>
+          <circle cx="130" cy="98" r="6" fill="#ee8e8e" opacity=".55"/>
+          <circle cx="170" cy="98" r="6" fill="#ee8e8e" opacity=".55"/>
+          <g class="eyesOpen" fill="#2a1a12"><circle cx="139" cy="87" r="3.4"/><circle cx="161" cy="87" r="3.4"/></g>
+          <g class="eyesShut" fill="none" stroke="#2a1a12" stroke-width="2.4" stroke-linecap="round"><path d="M133 87 q6 5 12 0"/><path d="M155 87 q6 5 12 0"/></g>
+          <path d="M131 79 q8 -6 15 -1 M154 78 q8 -5 15 1" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+          <g fill="var(--beard)">
+            <circle cx="121" cy="104" r="15"/><circle cx="131" cy="119" r="17"/><circle cx="150" cy="128" r="19"/>
+            <circle cx="169" cy="119" r="17"/><circle cx="179" cy="104" r="15"/>
+          </g>
+          <ellipse id="mouth" cx="150" cy="113" rx="5" ry="3" fill="#7a1f1f"/>
+          <path class="sleepMouth" d="M145 113 q5 3 10 0" fill="none" stroke="#7a1f1f" stroke-width="2.2" stroke-linecap="round"/>
+          <ellipse cx="140" cy="105" rx="12" ry="6" fill="var(--beard)"/>
+          <ellipse cx="160" cy="105" rx="12" ry="6" fill="var(--beard)"/>
+          <circle cx="150" cy="98" r="6.5" fill="#e59a86"/>
+          <path d="M116 76 Q120 36 152 34 Q190 33 208 64 L196 72 Q182 54 172 58 Q184 66 184 76 Z" fill="#c8102e"/>
+          <rect x="112" y="68" width="76" height="15" rx="7.5" fill="#ffffff"/>
+          <circle cx="203" cy="70" r="9" fill="#ffffff"/>
+        </g>
+        <!-- cookie being eaten -->
+        <g id="bite">
+          <g mask="url(#biteMask)">
+            <circle cx="150" cy="122" r="14" fill="var(--cookie)" stroke="#a86b33" stroke-width="1.5"/>
+            <circle cx="145" cy="117" r="2.2" fill="var(--chip)"/><circle cx="156" cy="121" r="2.2" fill="var(--chip)"/>
+            <circle cx="147" cy="128" r="2.2" fill="var(--chip)"/><circle cx="154" cy="113" r="1.8" fill="var(--chip)"/>
+          </g>
+        </g>
+        <g fill="var(--cookie)">
+          <circle class="crumb" cx="146" cy="138" r="2" style="--d:.9s;--x:-14px"/>
+          <circle class="crumb" cx="154" cy="138" r="1.6" style="--d:1.3s;--x:10px"/>
+          <circle class="crumb" cx="150" cy="140" r="2.2" style="--d:1.7s;--x:-4px"/>
+          <circle class="crumb" cx="158" cy="136" r="1.5" style="--d:2.1s;--x:16px"/>
+        </g>
+        <g font-family="Berkshire Swash, Georgia, serif" fill="#ffffff">
+          <text class="zz" x="214" y="52" font-size="18">z</text>
+          <text class="zz" x="228" y="36" font-size="24">Z</text>
+          <text class="zz" x="246" y="18" font-size="30">Z</text>
+        </g>
+      </svg>
+    </div>
+    <div class="caption" id="caption" aria-live="polite">Setting out the cookies…</div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="progress" aria-label="Shopping progress">
+      <div class="prow"><span class="big" id="pct">0%</span><span class="pmeta" id="pgifts">0 of 0 gifts bought</span></div>
+      <div class="bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+      <div class="pmeta" id="ppeople">0 of 0 people done</div>
+    </section>
+    <div id="lists"><div class="loading">Loading your list…</div></div>
+  </div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  const FAMILY_ORDER = ["Mom","Dad","Kim","Andy","Alice","KC","Kris","Jo","Nathan"];
+  let state = {people:[]};
+  let ref = null, localMode = false, loaded = false;
+  let writing = false, dirty = false;
+  let eatingUntil = 0;
+  const confirmRemove = new Set();
+  let confirmReset = false;
+  const $ = id => document.getElementById(id);
+  const santa = $("santa");
+  const uid = () => Math.random().toString(36).slice(2,10);
+  const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  const isDone = p => p.gifts.length > 0 && p.gifts.every(g => g.done);
+  const allDone = () => state.people.length > 0 && state.people.every(isDone);
+  const find = id => state.people.find(p => p.id === id);
+
+  // ---------- saving ----------
+  function save(){
+    if(localMode){ try{ localStorage.setItem("xmasList", JSON.stringify(state)); }catch(e){} return; }
+    if(!ref) return;
+    dirty = true;
+    if(!writing) flush();
+  }
+  async function flush(){
+    writing = true;
+    while(dirty){
+      dirty = false;
+      try{ await ref.set(JSON.parse(JSON.stringify(state))); }
+      catch(e){ toast("Couldn't save that change. Check your connection and try again."); break; }
+    }
+    writing = false;
+  }
+
+  // ---------- rendering ----------
+  function drawPlate(n){
+    const g = $("plate"); let out = "";
+    const shown = Math.min(n, 12);
+    const rows = [5,4,3];
+    let placed = 0, y = 180;
+    for(let r=0; r<rows.length && placed<shown; r++){
+      const k = Math.min(rows[r], shown-placed);
+      const start = 258 - (k-1)*9;
+      for(let i=0;i<k;i++){
+        const x = start + i*18;
+        out += `<g><circle cx="${x}" cy="${y}" r="9" fill="var(--cookie)" stroke="#a86b33" stroke-width="1.2"/><circle cx="${x-3}" cy="${y-2}" r="1.6" fill="var(--chip)"/><circle cx="${x+3}" cy="${y+2}" r="1.6" fill="var(--chip)"/></g>`;
+      }
+      placed += k; y -= 9;
+    }
+    g.innerHTML = out;
+  }
+
+  function updateTop(){
+    const gifts = state.people.flatMap(p => p.gifts);
+    const got = gifts.filter(g => g.done).length;
+    const pct = gifts.length ? Math.round(got/gifts.length*100) : 0;
+    const peopleDone = state.people.filter(isDone).length;
+    const left = state.people.length - peopleDone;
+    $("pct").textContent = pct + "%";
+    $("pgifts").textContent = `${got} of ${gifts.length} gift${gifts.length===1?"":"s"} bought`;
+    $("ppeople").textContent = `${peopleDone} of ${state.people.length} people done`;
+    $("fill").style.width = pct + "%";
+    $("bar").setAttribute("aria-valuenow", pct);
+    $("bar").classList.toggle("full", pct === 100);
+    drawPlate(left);
+    const eating = Date.now() < eatingUntil;
+    santa.classList.toggle("napping", allDone() && !eating);
+    if(!eating){
+      if(!loaded) return;
+      if(allDone()) $("caption").textContent = "Every gift is bought. Santa ate all the cookies and is sleeping it off.";
+      else if(!state.people.length) $("caption").textContent = "Add someone to start your list.";
+      else $("caption").textContent = `${left} cookie${left===1?"":"s"} on the plate: one for each person still on your list.`;
+    }
+  }
+
+  function card(p){
+    const done = isDone(p);
+    const got = p.gifts.filter(g=>g.done).length;
+    const items = p.gifts.length ? p.gifts.map(g => `
+      <li class="${g.done?"got":""}">
+        <button class="check" role="checkbox" aria-checked="${g.done}" aria-label="Bought: ${esc(g.text)}" data-act="toggle" data-p="${p.id}" data-g="${g.id}">
+          <svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="gtext">${esc(g.text)}</span>
+        <button class="yearly" aria-pressed="${!!g.annual}" title="Gets this every year" data-act="annual" data-p="${p.id}" data-g="${g.id}">${g.annual?"Every year":"One-time"}</button>
+        <button class="x" aria-label="Delete ${esc(g.text)}" data-act="delgift" data-p="${p.id}" data-g="${g.id}">×</button>
+      </li>`).join("") : `<li class="empty">No gift ideas yet.</li>`;
+    const rm = p.group === "others"
+      ? (confirmRemove.has(p.id)
+          ? `<div class="add" style="justify-content:flex-end"><button class="btn ghost" data-act="cancelrm" data-p="${p.id}">Keep</button><button class="btn red" data-act="rmperson" data-p="${p.id}">Remove ${esc(p.name)}</button></div>`
+          : `<button class="rm" data-act="askrm" data-p="${p.id}">Remove ${esc(p.name)}</button>`)
+      : "";
+    return `<article class="card ${done?"done":""}">
+      <div class="chead">
+        <span class="cname">${esc(p.name)}</span>
+        <span class="count">${got}/${p.gifts.length}</span>
+        ${done ? `<span class="pill">Done</span>` : ""}
+      </div>
+      <ul>${items}</ul>
+      <form class="add" data-p="${p.id}">
+        <input id="add-${p.id}" type="text" placeholder="Add a gift for ${esc(p.name)}" aria-label="New gift for ${esc(p.name)}" autocomplete="off" enterkeyhint="done">
+        <button class="btn" type="submit">Add</button>
+      </form>
+      ${rm}
+    </article>`;
+  }
+
+  function render(){
+    updateTop();
+    if(!loaded) return;
+    // keep drafts and focus across re-render
+    const drafts = {};
+    document.querySelectorAll(".add input,.addp input").forEach(i => drafts[i.id] = i.value);
+    const focused = document.activeElement && document.activeElement.id;
+
+    const fam = state.people.filter(p => p.group !== "others")
+      .sort((a,b) => { const o = n => { const i = FAMILY_ORDER.indexOf(n); return i < 0 ? 99 : i; }; return o(a.name) - o(b.name); });
+    const others = state.people.filter(p => p.group === "others");
+    let html = "";
+    if(fam.length) html += `<section class="section"><h2>Family &amp; friends</h2><div class="grid">${fam.map(card).join("")}</div></section>`;
+    html += `<section class="section"><h2>Others</h2>
+      ${others.length ? `<div class="grid">${others.map(card).join("")}</div>` : ""}
+      <form class="addp"><input id="addperson" type="text" placeholder="Add someone (teacher, neighbor…)" aria-label="New person" autocomplete="off"><button class="btn red" type="submit">Add person</button></form>
+    </section>`;
+    html += `<section class="reset">
+      <div>Done for the year? Start next year's list: "Every year" gifts stay and get unchecked, one-time gifts are cleared.</div>
+      ${confirmReset
+        ? `<div class="row"><button class="btn red" data-act="doreset">Yes, start next year</button><button class="btn ghost" data-act="cancelreset">Cancel</button></div>`
+        : `<button class="btn ghost" data-act="askreset">Start next year's list</button>`}
+    </section>`;
+    $("lists").innerHTML = html;
+    for(const id in drafts){ const el = $(id); if(el) el.value = drafts[id]; }
+    if(focused && $(focused)) $(focused).focus();
+  }
+
+  // ---------- fun ----------
+  let toastT;
+  function toast(msg){
+    const t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove("show"), 3200);
+  }
+  function eat(name, final){
+    eatingUntil = Date.now() + 2700;
+    santa.classList.remove("napping","eating"); void santa.getBoundingClientRect(); santa.classList.add("eating");
+    $("caption").textContent = final ? `${name} is done, and so are you! Santa's eating the last cookie…` : `${name} is all set. Santa's having a cookie to celebrate!`;
+    toast(final ? "Shopping complete!" : `${name}: done!`);
+    setTimeout(()=>{ santa.classList.remove("eating"); eatingUntil = 0; updateTop(); }, 2750);
+  }
+
+  // ---------- actions ----------
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]"); if(!b) return;
+    const act = b.dataset.act, p = b.dataset.p && find(b.dataset.p);
+    if(act === "toggle" && p){
+      const g = p.gifts.find(x => x.id === b.dataset.g); if(!g) return;
+      const was = isDone(p);
+      g.done = !g.done;
+      save();
+      if(!was && isDone(p)) eat(p.name, allDone());
+      render();
+    } else if(act === "annual" && p){
+      const g = p.gifts.find(x => x.id === b.dataset.g); if(!g) return;
+      g.annual = !g.annual; save(); render();
+    } else if(act === "delgift" && p){
+      p.gifts = p.gifts.filter(x => x.id !== b.dataset.g); save(); render();
+    } else if(act === "askrm"){ confirmRemove.add(b.dataset.p); render(); }
+    else if(act === "cancelrm"){ confirmRemove.delete(b.dataset.p); render(); }
+    else if(act === "rmperson"){ state.people = state.people.filter(x => x.id !== b.dataset.p); confirmRemove.delete(b.dataset.p); save(); render(); }
+    else if(act === "askreset"){ confirmReset = true; render(); }
+    else if(act === "cancelreset"){ confirmReset = false; render(); }
+    else if(act === "doreset"){
+      state.people.forEach(pp => { pp.gifts = pp.gifts.filter(g => g.annual).map(g => ({...g, done:false})); });
+      confirmReset = false; save(); render(); toast("Fresh list. The cookies are back on the plate.");
+    }
+  });
+  document.addEventListener("submit", e => {
+    e.preventDefault();
+    const f = e.target;
+    const input = f.querySelector("input"); const text = input.value.trim(); if(!text) return;
+    if(f.classList.contains("addp")){
+      state.people.push({id:uid(), name:text, group:"others", gifts:[]});
+    } else {
+      const p = find(f.dataset.p); if(!p) return;
+      p.gifts.push({id:uid(), text, done:false, annual:false});
+    }
+    input.value = "";
+    save(); render();
+    const again = f.classList.contains("addp") ? $("addperson") : $("add-"+f.dataset.p);
+    if(again) again.focus();
+  });
+
+  // ---------- load (saved on this device) ----------
+  const SEED = {"people": [{"id": "mom", "name": "Mom", "group": "family", "gifts": []}, {"id": "dad", "name": "Dad", "group": "family", "gifts": [{"id": "dad1", "text": "Puzzle", "done": false, "annual": true}]}, {"id": "kim", "name": "Kim", "group": "family", "gifts": []}, {"id": "andy", "name": "Andy", "group": "family", "gifts": []}, {"id": "alice", "name": "Alice", "group": "family", "gifts": [{"id": "al1", "text": "Ornament", "done": false, "annual": true}, {"id": "al2", "text": "Custom book", "done": false, "annual": true}]}, {"id": "kc", "name": "KC", "group": "family", "gifts": []}, {"id": "kris", "name": "Kris", "group": "family", "gifts": []}, {"id": "jo", "name": "Jo", "group": "family", "gifts": []}, {"id": "nathan", "name": "Nathan", "group": "family", "gifts": [{"id": "na1", "text": "Ornament", "done": false, "annual": true}, {"id": "na2", "text": "Custom book", "done": false, "annual": true}]}, {"id": "morgan", "name": "Morgan", "group": "others", "gifts": [{"id": "mo1", "text": "Ornament", "done": false, "annual": true}]}]};
+  localMode = true; loaded = true;
+  try{ const s = JSON.parse(localStorage.getItem("xmasList")||"null"); state = (s && s.people) ? s : SEED; }catch(e){ state = SEED; }
+  save();
+  render();
+})();
+</script>
+
+</body>
+</html>
