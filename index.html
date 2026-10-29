@@ -427,10 +427,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
       .sort((a,b) => { const o = n => { const i = FAMILY_ORDER.indexOf(n); return i < 0 ? 99 : i; }; return o(a.name) - o(b.name); });
     const others = state.people.filter(p => p.group === "others");
     let html = "";
-    if(fam.length) html += `<section class="section"><h2>Family &amp; friends</h2><div class="grid">${fam.map(card).join("")}</div></section>`;
-    html += `<section class="section"><h2>Others</h2>
+    if(fam.length) html += `<section class="section"><h2>Family</h2><div class="grid">${fam.map(card).join("")}</div></section>`;
+    html += `<section class="section"><h2>Friends</h2>
       ${others.length ? `<div class="grid">${others.map(card).join("")}</div>` : ""}
-      <form class="addp"><input id="addperson" type="text" placeholder="Add someone (teacher, neighbor…)" aria-label="New person" autocomplete="off"><button class="btn red" type="submit">Add person</button></form>
+      <form class="addp"><input id="addperson" type="text" placeholder="Add a friend" aria-label="New friend" autocomplete="off"><button class="btn red" type="submit">Add friend</button></form>
     </section>`;
     html += `<section class="reset">
       <div>Done for the year? Start next year's list: "Every year" gifts stay and get unchecked, one-time gifts are cleared.</div>
