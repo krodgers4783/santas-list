@@ -100,6 +100,15 @@ li:last-child{border-bottom:0}
 .check[aria-checked="true"] svg{opacity:1;transform:scale(1)}
 .check:active{transform:scale(.9)}
 .gtext{flex:1;min-width:0;overflow-wrap:anywhere}
+.icons{flex:none;display:flex;gap:1px;margin-left:-4px}
+.ib{--hole:var(--paper);width:32px;height:34px;padding:0;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;border-radius:10px;color:var(--muted);transition:transform .15s}
+.ib svg{width:26px;height:26px;overflow:visible}
+.ib:active{transform:scale(.86)}
+.ib.just{animation:ibpop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes ibpop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:14px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend svg{width:22px;height:22px;overflow:visible}
 li.got .gtext{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:var(--muted)}
 .yearly{flex:none;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 8px;cursor:pointer;
   border:1px dashed var(--line);background:transparent;color:var(--muted)}
@@ -138,6 +147,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
 .grid .card .check{background:transparent;border-color:rgba(255,255,255,.75)}
 .grid .card .check[aria-checked="true"]{border-color:#ffffff;background:#ffffff}
 .grid .card .check[aria-checked="true"] path{stroke:var(--cbg)}
+.grid .card .ib{--hole:var(--cbg);color:rgba(255,255,255,.85)}
 .grid .card .yearly{color:var(--on-card-soft);border-color:var(--on-card-line)}
 .grid .card .yearly[aria-pressed="true"]{color:#ffe08a;border-color:#ffe08a}
 .grid .card .x{color:var(--on-card-soft)}
@@ -158,34 +168,29 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   padding:12px 18px;border-radius:14px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:transform .35s cubic-bezier(.3,1.4,.5,1);z-index:20;max-width:calc(100% - 32px);text-align:center}
 .toast.show{transform:translate(-50%,0)}
 
-/* Santa animation */
-#santa .eyesShut,#santa .zz,#santa .sleepMouth{opacity:0}
-#santa #head{transform-box:view-box;transform-origin:150px 120px;transition:transform .8s ease}
-#bite{opacity:0;transform-box:view-box;transform-origin:150px 122px}
-#santa.eating #bite{animation:bring 2.6s ease forwards}
-@keyframes bring{0%{opacity:1;transform:translate(110px,62px) scale(.6)}22%{opacity:1;transform:translate(0,0) scale(1)}80%{opacity:1;transform:translate(0,0) scale(1)}90%,100%{opacity:0;transform:translate(0,0) scale(1)}}
-#biteMask circle{opacity:0}
-#santa.eating .b1{animation:bitein 2.6s steps(1) forwards;animation-delay:.75s}
-#santa.eating .b2{animation:bitein 2.6s steps(1) forwards;animation-delay:1.2s}
-#santa.eating .b3{animation:bitein 2.6s steps(1) forwards;animation-delay:1.65s}
-#santa.eating .b4{animation:bitein 2.6s steps(1) forwards;animation-delay:2.05s}
-@keyframes bitein{to{opacity:1}}
-#mouth{transform-box:fill-box;transform-origin:center}
-#santa.eating #mouth{animation:chomp .45s ease-in-out 5 .6s}
-@keyframes chomp{50%{transform:scaleY(2.4)}}
-.crumb{opacity:0}
-#santa.eating .crumb{animation:crumb 1.4s ease-in forwards;animation-delay:var(--d)}
-@keyframes crumb{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(var(--x),46px)}}
-#santa.napping #head{transform:rotate(14deg)}
-#santa.napping .eyesOpen,#santa.napping #mouth{opacity:0}
-#santa.napping .eyesShut,#santa.napping .sleepMouth{opacity:1}
-#santa.napping .zz{animation:zz 3s ease-in-out infinite}
-#santa.napping .zz:nth-of-type(2){animation-delay:1s}
-#santa.napping .zz:nth-of-type(3){animation-delay:2s}
-@keyframes zz{0%{opacity:0;transform:translate(0,8px)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-16px)}}
-#santa.napping #belly{animation:breathe 3s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom}
-@keyframes breathe{50%{transform:scaleY(1.04)}}
-@media (prefers-reduced-motion:reduce){.snow,.fill{animation:none}#santa.napping .zz{animation:none;opacity:1}#santa.napping #belly{animation:none}}
+/* Tree */
+#tree .bulb{transition:fill .5s}
+#tree .bglow{opacity:0;transition:opacity .6s}
+#tree{overflow:visible}
+#tree.lit .bglow{opacity:.45;animation:twk 1.6s ease-in-out infinite;animation-delay:var(--d)}
+@keyframes twk{50%{opacity:.12}}
+#halo{opacity:0;transition:opacity 1s;transform-box:fill-box;transform-origin:center}
+#tree.lit #halo{opacity:1;animation:halo 2.4s ease-in-out infinite}
+@keyframes halo{50%{transform:scale(1.2)}}
+#star{fill:#7d7442;stroke:#b8a75a;stroke-width:1;transition:fill .6s;transform-box:fill-box;transform-origin:center}
+#tree.lit #star{fill:#ffd23f;stroke:#fff3b0;animation:starspin 3s ease-in-out infinite}
+@keyframes starspin{50%{transform:scale(1.15) rotate(8deg)}}
+#tiers{transform-box:view-box;transform-origin:170px 200px}
+#tree.sway #tiers{animation:sway .9s ease-in-out}
+@keyframes sway{25%{transform:rotate(-2.2deg)}60%{transform:rotate(1.8deg)}}
+.orn,.cane,.pres{transform-box:fill-box}
+.orn.new{transform-origin:50% 0;animation:ornIn .8s cubic-bezier(.3,1.5,.5,1)}
+@keyframes ornIn{0%{transform:translateY(-46px) scale(.3);opacity:0}55%{opacity:1}100%{transform:none}}
+.cane.new{transform-origin:50% 0;animation:caneIn 1s ease-out}
+@keyframes caneIn{0%{transform:translateY(-30px) rotate(-60deg);opacity:0}45%{transform:rotate(25deg);opacity:1}70%{transform:rotate(-12deg)}85%{transform:rotate(5deg)}100%{transform:none}}
+.pres.new{transform-origin:50% 100%;animation:presIn .8s cubic-bezier(.3,1.2,.5,1)}
+@keyframes presIn{0%{transform:translateY(-60px);opacity:0}50%{transform:translateY(0) scale(1.15,.8);opacity:1}75%{transform:scale(.95,1.06)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.snow,.fill,#tree .bulb,#tree .bglow,#halo,#star,.orn,.cane,.pres,#tiers,.ib{animation:none!important}}
 </style>
 </head>
 <body>
@@ -219,87 +224,45 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
       </svg>
     </div>
     <div class="scene">
-      <svg id="santa" viewBox="0 0 340 214" role="img" aria-label="Santa at a table with a plate of cookies">
+      <svg id="tree" viewBox="0 0 340 230" role="img" aria-label="Christmas tree that fills with ornaments, candy canes and presents">
         <defs>
-          <mask id="biteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="340" height="214">
-            <rect x="0" y="0" width="340" height="214" fill="#fff"/>
-            <circle class="b1" cx="164" cy="112" r="8" fill="#000"/>
-            <circle class="b2" cx="138" cy="114" r="8" fill="#000"/>
-            <circle class="b3" cx="160" cy="132" r="9" fill="#000"/>
-            <circle class="b4" cx="150" cy="122" r="16" fill="#000"/>
-          </mask>
+          <radialGradient id="starGlow"><stop offset="0" stop-color="#ffe680" stop-opacity=".85"/><stop offset="1" stop-color="#ffe680" stop-opacity="0"/></radialGradient>
+          <pattern id="tcane" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+            <rect width="3.2" height="3.2" fill="#ffffff"/><rect width="1.5" height="3.2" fill="#d5122f"/>
+          </pattern>
+          <pattern id="icane" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
+            <rect width="4" height="4" fill="#ffffff"/><rect width="1.9" height="4" fill="#d5122f"/>
+          </pattern>
         </defs>
-        <!-- table -->
-        <rect x="200" y="192" width="140" height="22" rx="4" fill="#7a4a2a"/>
-        <rect x="196" y="188" width="148" height="8" rx="4" fill="#94603a"/>
-        <!-- milk -->
-        <rect x="306" y="150" width="20" height="38" rx="4" fill="#ffffff" opacity=".92"/>
-        <rect x="306" y="150" width="20" height="8" rx="3" fill="#dfe8f0"/>
-        <!-- plate -->
-        <ellipse cx="258" cy="186" rx="50" ry="8" fill="var(--plate)" stroke="#c9c2b7" stroke-width="1.5"/>
-        <g id="plate"></g>
-        <!-- santa body -->
-        <g id="belly">
-          <path d="M92 214 V168 Q92 128 150 128 Q208 128 208 168 V214 Z" fill="#c8102e"/>
-          <rect x="144" y="130" width="12" height="84" fill="#ffffff"/>
-          <rect x="92" y="176" width="116" height="13" fill="#222"/>
-          <rect x="140" y="173" width="20" height="19" rx="3" fill="none" stroke="#e7b63c" stroke-width="3.5"/>
+        <ellipse cx="170" cy="221" rx="160" ry="11" fill="#eef5f0" opacity=".9"/>
+        <circle id="halo" cx="170" cy="24" r="42" fill="url(#starGlow)"/>
+        <g id="tiers">
+          <rect x="160" y="178" width="20" height="30" rx="2" fill="#6b4226"/>
+          <path d="M170 92 L272 186 Q170 197 68 186 Z" fill="#1f7a48"/>
+          <path d="M170 92 L272 186 Q222 193 170 194 Z" fill="#000" opacity=".12"/>
+          <path d="M170 54 L246 136 Q170 147 94 136 Z" fill="#26904f"/>
+          <path d="M170 54 L246 136 Q210 143 170 144 Z" fill="#000" opacity=".12"/>
+          <path d="M170 20 L218 90 Q170 100 122 90 Z" fill="#2ea35c"/>
+          <path d="M170 20 L218 90 Q196 96 170 98 Z" fill="#000" opacity=".12"/>
+          <g id="wires" fill="none" stroke="#0c3320" stroke-width="1.1"></g>
+          <g id="bulbs"></g>
+          <g id="orns"></g>
+          <g id="canes"></g>
         </g>
-        <ellipse cx="96" cy="170" rx="13" ry="30" fill="#b00d27" transform="rotate(14 96 170)"/>
-        <ellipse cx="204" cy="168" rx="13" ry="28" fill="#b00d27" transform="rotate(-36 204 168)"/>
-        <circle cx="219" cy="186" r="9" fill="#1d5c3a"/>
-        <circle cx="88" cy="198" r="9" fill="#1d5c3a"/>
-        <!-- head -->
-        <g id="head">
-          <circle cx="150" cy="92" r="30" fill="var(--skin)"/>
-          <circle cx="130" cy="98" r="6" fill="#ee8e8e" opacity=".55"/>
-          <circle cx="170" cy="98" r="6" fill="#ee8e8e" opacity=".55"/>
-          <g class="eyesOpen" fill="#2a1a12"><circle cx="139" cy="87" r="3.4"/><circle cx="161" cy="87" r="3.4"/></g>
-          <g class="eyesShut" fill="none" stroke="#2a1a12" stroke-width="2.4" stroke-linecap="round"><path d="M133 87 q6 5 12 0"/><path d="M155 87 q6 5 12 0"/></g>
-          <path d="M131 79 q8 -6 15 -1 M154 78 q8 -5 15 1" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
-          <g fill="var(--beard)">
-            <circle cx="121" cy="104" r="15"/><circle cx="131" cy="119" r="17"/><circle cx="150" cy="128" r="19"/>
-            <circle cx="169" cy="119" r="17"/><circle cx="179" cy="104" r="15"/>
-          </g>
-          <ellipse id="mouth" cx="150" cy="113" rx="5" ry="3" fill="#7a1f1f"/>
-          <path class="sleepMouth" d="M145 113 q5 3 10 0" fill="none" stroke="#7a1f1f" stroke-width="2.2" stroke-linecap="round"/>
-          <ellipse cx="140" cy="105" rx="12" ry="6" fill="var(--beard)"/>
-          <ellipse cx="160" cy="105" rx="12" ry="6" fill="var(--beard)"/>
-          <circle cx="150" cy="98" r="6.5" fill="#e59a86"/>
-          <path d="M116 76 Q120 36 152 34 Q190 33 208 64 L196 72 Q182 54 172 58 Q184 66 184 76 Z" fill="#c8102e"/>
-          <rect x="112" y="68" width="76" height="15" rx="7.5" fill="#ffffff"/>
-          <circle cx="203" cy="70" r="9" fill="#ffffff"/>
-        </g>
-        <!-- cookie being eaten -->
-        <g id="bite">
-          <g mask="url(#biteMask)">
-            <circle cx="150" cy="122" r="14" fill="var(--cookie)" stroke="#a86b33" stroke-width="1.5"/>
-            <circle cx="145" cy="117" r="2.2" fill="var(--chip)"/><circle cx="156" cy="121" r="2.2" fill="var(--chip)"/>
-            <circle cx="147" cy="128" r="2.2" fill="var(--chip)"/><circle cx="154" cy="113" r="1.8" fill="var(--chip)"/>
-          </g>
-        </g>
-        <g fill="var(--cookie)">
-          <circle class="crumb" cx="146" cy="138" r="2" style="--d:.9s;--x:-14px"/>
-          <circle class="crumb" cx="154" cy="138" r="1.6" style="--d:1.3s;--x:10px"/>
-          <circle class="crumb" cx="150" cy="140" r="2.2" style="--d:1.7s;--x:-4px"/>
-          <circle class="crumb" cx="158" cy="136" r="1.5" style="--d:2.1s;--x:16px"/>
-        </g>
-        <g font-family="Berkshire Swash, Georgia, serif" fill="#ffffff">
-          <text class="zz" x="214" y="52" font-size="18">z</text>
-          <text class="zz" x="228" y="36" font-size="24">Z</text>
-          <text class="zz" x="246" y="18" font-size="30">Z</text>
-        </g>
+        <g id="presents"></g>
+        <polygon id="star" points=""/>
       </svg>
     </div>
-    <div class="caption" id="caption" aria-live="polite">Setting out the cookies…</div>
+    <div class="caption" id="caption" aria-live="polite">Decorating the tree…</div>
   </div>
 </header>
 
 <main>
   <div class="wrap">
     <section class="progress" aria-label="Shopping progress">
-      <div class="prow"><span class="big" id="pct">0%</span><span class="pmeta" id="pgifts">0 of 0 gifts bought</span></div>
+      <div class="prow"><span class="big" id="pct">0%</span><span class="pmeta" id="pgifts">0 gifts</span></div>
       <div class="bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+      <div class="legend" id="legend"></div>
       <div class="pmeta" id="ppeople">0 of 0 people done</div>
     </section>
     <div id="lists"><div class="loading">Loading your list…</div></div>
@@ -313,16 +276,22 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   let state = {people:[]};
   let ref = null, localMode = false, loaded = false;
   let writing = false, dirty = false;
-  let eatingUntil = 0;
   const confirmRemove = new Set();
   let confirmReset = false;
+  let justTapped = "";
   const $ = id => document.getElementById(id);
-  const santa = $("santa");
   const uid = () => Math.random().toString(36).slice(2,10);
   const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-  const isDone = p => p.gifts.length > 0 && p.gifts.every(g => g.done);
-  const allDone = () => state.people.length > 0 && state.people.every(isDone);
+  const STEPS = [["ordered","Ordered"],["received","Received"],["wrapped","Wrapped"]];
+  function normalize(){
+    state.people.forEach(p => p.gifts.forEach(g => {
+      if(g.ordered === undefined){ g.ordered = !!g.done; g.received = false; g.wrapped = false; }
+      g.done = !!g.wrapped;
+    }));
+  }
+  const isDone = p => p.gifts.length > 0 && p.gifts.every(g => g.wrapped);
+  const allDone = () => { const gs = state.people.flatMap(p => p.gifts); return gs.length > 0 && gs.every(g => g.wrapped); };
   const find = id => state.people.find(p => p.id === id);
 
   // ---------- saving ----------
@@ -343,56 +312,134 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   }
 
   // ---------- rendering ----------
-  function drawPlate(n){
-    const g = $("plate"); let out = "";
-    const shown = Math.min(n, 12);
-    const rows = [5,4,3];
-    let placed = 0, y = 180;
-    for(let r=0; r<rows.length && placed<shown; r++){
-      const k = Math.min(rows[r], shown-placed);
-      const start = 258 - (k-1)*9;
-      for(let i=0;i<k;i++){
-        const x = start + i*18;
-        out += `<g><circle cx="${x}" cy="${y}" r="9" fill="var(--cookie)" stroke="#a86b33" stroke-width="1.2"/><circle cx="${x-3}" cy="${y-2}" r="1.6" fill="var(--chip)"/><circle cx="${x+3}" cy="${y+2}" r="1.6" fill="var(--chip)"/></g>`;
-      }
-      placed += k; y -= 9;
+  // ---------- icons (outline until checked, then filled) ----------
+  const ICON = {
+    ordered(on){ // ornament
+      return on
+        ? `<svg viewBox="0 0 28 28"><circle cx="14" cy="3.2" r="1.7" fill="none" stroke="#c9c9c9" stroke-width="1.4"/><rect x="11.2" y="4.6" width="5.6" height="4" rx="1" fill="#d9d9d9" stroke="rgba(0,0,0,.25)" stroke-width=".8"/><circle cx="14" cy="17.2" r="9.2" fill="#f2c14e" stroke="rgba(0,0,0,.25)" stroke-width=".9"/><path d="M5.6 15.5 Q14 19 22.4 15.5" fill="none" stroke="#d5122f" stroke-width="2"/><circle cx="10.6" cy="13.4" r="2.2" fill="#fff" opacity=".7"/></svg>`
+        : `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="14" cy="3.2" r="1.6"/><rect x="11.2" y="4.8" width="5.6" height="3.6" rx="1"/><circle cx="14" cy="17.2" r="8.8"/></svg>`;
+    },
+    received(on){ // candy cane
+      const d = "M17.5 26 V10 a5.2 5.2 0 0 0 -10.4 0 v2.6";
+      return on
+        ? `<svg viewBox="0 0 28 28" fill="none" stroke-linecap="round"><path d="${d}" stroke="rgba(0,0,0,.28)" stroke-width="7.4"/><path d="${d}" stroke="url(#icane)" stroke-width="6"/></svg>`
+        : `<svg viewBox="0 0 28 28" fill="none" stroke-linecap="round"><path d="${d}" stroke="currentColor" stroke-width="7.2"/><path d="${d}" stroke="var(--hole)" stroke-width="3.6"/></svg>`;
+    },
+    wrapped(on){ // present
+      return on
+        ? `<svg viewBox="0 0 28 28"><rect x="5" y="12.5" width="18" height="12.5" rx="1.5" fill="#ffffff" stroke="rgba(0,0,0,.25)" stroke-width=".9"/><rect x="4" y="9" width="20" height="4.6" rx="1" fill="#ffffff" stroke="rgba(0,0,0,.25)" stroke-width=".9"/><rect x="12.4" y="9" width="3.2" height="16" fill="#d5122f"/><path d="M14 9 C10 3 5.5 5.5 9.4 9 Z M14 9 C18 3 22.5 5.5 18.6 9 Z" fill="#f2c14e" stroke="rgba(0,0,0,.25)" stroke-width=".8"/></svg>`
+        : `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="5" y="13" width="18" height="12" rx="1.5"/><rect x="4" y="9" width="20" height="4" rx="1"/><path d="M14 9 V25"/><path d="M14 9 C10 3 5.5 5.5 9.4 9 M14 9 C18 3 22.5 5.5 18.6 9"/></svg>`;
     }
-    g.innerHTML = out;
+  };
+  const LABEL = {ordered:"Ordered", received:"Received", wrapped:"Wrapped"};
+
+  // ---------- tree ----------
+  const tree = $("tree");
+  function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const TIERS = [[20,90,48],[54,136,76],[92,186,102]]; // apex y, base y, half-width at base
+  const inside = (x,y,m) => TIERS.some(([a,b,w]) => y > a+8 && y < b-6 && Math.abs(x-170) < (y-a)/(b-a)*w - m);
+  // star
+  (function(){ const pts=[]; for(let i=0;i<10;i++){ const r = i%2 ? 5.6 : 13.5, a = -Math.PI/2 + i*Math.PI/5; pts.push((170+r*Math.cos(a)).toFixed(1)+","+(24+r*Math.sin(a)).toFixed(1)); } $("star").setAttribute("points", pts.join(" ")); })();
+  // garland + bulbs
+  const BULB_COLORS = ["#ff4d5e","#ffd23f","#4cc3ff","#7dff8a","#ff8de1"];
+  const bulbPts = [];
+  (function(){
+    const curves = [[[140,64],[170,86],[202,72],6],[[110,110],[170,140],[234,118],9],[[86,156],[170,196],[260,164],12]];
+    let wires = "", bulbs = "", k = 0;
+    curves.forEach(([p0,c,p2,n]) => {
+      wires += `<path d="M${p0[0]} ${p0[1]} Q${c[0]} ${c[1]} ${p2[0]} ${p2[1]}"/>`;
+      for(let i=0;i<n;i++){
+        const t = .05 + .9*i/(n-1), u = 1-t;
+        const x = u*u*p0[0] + 2*u*t*c[0] + t*t*p2[0], y = u*u*p0[1] + 2*u*t*c[1] + t*t*p2[1];
+        bulbPts.push([x,y]); const col = BULB_COLORS[k++ % BULB_COLORS.length], d = (k*0.37 % 1.6).toFixed(2);
+        bulbs += `<g style="--d:-${d}s"><circle class="bglow" cx="${x.toFixed(1)}" cy="${(y+2).toFixed(1)}" r="5.5" fill="${col}"/><circle class="bulb" cx="${x.toFixed(1)}" cy="${(y+2).toFixed(1)}" r="2.8" data-c="${col}" fill="#0b2a1a" stroke="#4c6b58" stroke-width=".6"/></g>`;
+      }
+    });
+    $("wires").innerHTML = wires; $("bulbs").innerHTML = bulbs;
+  })();
+  // spots for ornaments (even) and candy canes (odd)
+  const SPOTS = (function(){
+    const r = rng(1225), out = [];
+    for(let tries=0; tries<6000 && out.length<84; tries++){
+      const x = 70 + r()*200, y = 34 + r()*146;
+      if(!inside(x,y,9)) continue;
+      if(out.some(([a,b]) => Math.hypot(a-x,b-y) < 12.5)) continue;
+      if(bulbPts.some(([a,b]) => Math.hypot(a-x,b-y-2) < 7)) continue;
+      out.push([x,y]);
+    }
+    return out;
+  })();
+  const ORN_SPOTS = SPOTS.filter((_,i)=>i%2===0), CANE_SPOTS = SPOTS.filter((_,i)=>i%2===1);
+  const ORN_COLORS = ["#e23a4f","#f2c14e","#4c9be8","#e8e8f0","#b06ad9","#ff8a3d"];
+  const PRES_SLOTS = [[158,216,26,18],[186,216,22,15],[132,217,22,16],[214,217,24,19],[132,206,20,15],[208,206,22,14],[104,218,20,14],[242,218,22,16],[106,207,18,15],[236,207,20,17],[78,219,20,15],[268,219,20,13],[82,208,18,13],[262,208,18,14],[54,220,18,14],[290,220,18,15]];
+  const PRES_COLORS = [["#d5122f","#f2c14e"],["#2f6dc2","#ffffff"],["#f2c14e","#d5122f"],["#8e44ad","#f2c14e"],["#ffffff","#d5122f"],["#1d8a4a","#ffd23f"]];
+  let prev = null, treeKey = "";
+  function drawTree(o, r, w, lit){
+    const key = [o,r,w,lit].join(",");
+    if(key === treeKey) return;
+    treeKey = key;
+    const was = prev || {o, r, w};
+    let s = "";
+    ORN_SPOTS.slice(0, o).forEach(([x,y],i) => {
+      const c = ORN_COLORS[i % ORN_COLORS.length];
+      s += `<g class="orn${i>=was.o?" new":""}"><line x1="${x}" y1="${y-9}" x2="${x}" y2="${y-5}" stroke="#0c3320" stroke-width=".7"/><rect x="${x-1.6}" y="${y-6.6}" width="3.2" height="2.2" rx=".6" fill="#cfcfcf"/><circle cx="${x}" cy="${y}" r="5" fill="${c}"/><circle cx="${x-1.7}" cy="${y-1.7}" r="1.3" fill="#fff" opacity=".65"/></g>`;
+    });
+    $("orns").innerHTML = s; s = "";
+    CANE_SPOTS.slice(0, r).forEach(([x,y],i) => {
+      const flip = -1, d = `M${x-1.5*flip} ${y+8} V${y-1} a${2.6} ${2.6} 0 0 ${flip>0?1:0} ${5.2*flip} 0 v1.4`;
+      s += `<g class="cane${i>=was.r?" new":""}"><path d="${d}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="3.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="url(#tcane)" stroke-width="2.5" stroke-linecap="round"/></g>`;
+    });
+    $("canes").innerHTML = s; s = "";
+    const pres = PRES_SLOTS.slice(0, w).map((p,i) => [p,i]).sort((a,b) => a[0][1]-b[0][1]);
+    pres.forEach(([[cx,bot,pw,ph],i]) => {
+      const [box,rib] = PRES_COLORS[i % PRES_COLORS.length], x = cx-pw/2, y = bot-ph;
+      s += `<g class="pres${i>=was.w?" new":""}"><rect x="${x}" y="${y}" width="${pw}" height="${ph}" rx="1.5" fill="${box}" stroke="rgba(0,0,0,.25)" stroke-width=".7"/><rect x="${cx-1.6}" y="${y}" width="3.2" height="${ph}" fill="${rib}"/><rect x="${x}" y="${y+ph*.38}" width="${pw}" height="2.6" fill="${rib}"/><ellipse cx="${cx-3.4}" cy="${y-1.6}" rx="3.6" ry="2.4" fill="${rib}"/><ellipse cx="${cx+3.4}" cy="${y-1.6}" rx="3.6" ry="2.4" fill="${rib}"/><circle cx="${cx}" cy="${y-.8}" r="1.6" fill="${rib}"/></g>`;
+    });
+    $("presents").innerHTML = s;
+    tree.classList.toggle("lit", lit);
+    tree.querySelectorAll(".bulb").forEach(b => b.setAttribute("fill", lit ? b.dataset.c : "#0b2a1a"));
+    prev = {o, r, w};
   }
 
   function updateTop(){
     const gifts = state.people.flatMap(p => p.gifts);
-    const got = gifts.filter(g => g.done).length;
-    const pct = gifts.length ? Math.round(got/gifts.length*100) : 0;
+    const n = k => gifts.filter(g => g[k]).length;
+    const o = n("ordered"), r = n("received"), w = n("wrapped");
+    const pct = gifts.length ? Math.round((o+r+w)/(gifts.length*3)*100) : 0;
     const peopleDone = state.people.filter(isDone).length;
-    const left = state.people.length - peopleDone;
     $("pct").textContent = pct + "%";
-    $("pgifts").textContent = `${got} of ${gifts.length} gift${gifts.length===1?"":"s"} bought`;
+    $("pgifts").textContent = `${gifts.length} gift${gifts.length===1?"":"s"}`;
+    $("legend").innerHTML = `<span>${ICON.ordered(true)}${o} ordered</span><span>${ICON.received(true)}${r} received</span><span>${ICON.wrapped(true)}${w} wrapped</span>`;
     $("ppeople").textContent = `${peopleDone} of ${state.people.length} people done`;
     $("fill").style.width = pct + "%";
     $("bar").setAttribute("aria-valuenow", pct);
     $("bar").classList.toggle("full", pct === 100);
-    drawPlate(left);
-    const eating = Date.now() < eatingUntil;
-    santa.classList.toggle("napping", allDone() && !eating);
-    if(!eating){
-      if(!loaded) return;
-      if(allDone()) $("caption").textContent = "Every gift is bought. Santa ate all the cookies and is sleeping it off.";
-      else if(!state.people.length) $("caption").textContent = "Add someone to start your list.";
-      else $("caption").textContent = `${left} cookie${left===1?"":"s"} on the plate: one for each person still on your list.`;
+    if(!loaded) return;
+    const lit = allDone();
+    drawTree(o, r, w, lit);
+    const extra = Math.max(0, o-ORN_SPOTS.length) + Math.max(0, r-CANE_SPOTS.length) + Math.max(0, w-PRES_SLOTS.length);
+    const pl = (k, a, b) => `${k} ${k===1?a:b}`;
+    let msg;
+    if(!state.people.length) msg = "Add someone to start your list.";
+    else if(lit){
+      const none = state.people.filter(p => !p.gifts.length).map(p => p.name);
+      msg = "Every gift is wrapped. The tree is lit!" + (none.length ? ` Still no gift ideas for ${none.join(", ")}.` : "");
     }
+    else if(!gifts.length) msg = "Add gift ideas to start decorating the tree.";
+    else msg = `${pl(o,"ornament","ornaments")}, ${pl(r,"candy cane","candy canes")} and ${pl(w,"present","presents")} so far. Wrap everything to light the tree.`;
+    if(extra && !lit) msg += ` (The tree is full: ${extra} more not shown.)`;
+    $("caption").textContent = msg;
   }
 
   function card(p){
     const done = isDone(p);
-    const got = p.gifts.filter(g=>g.done).length;
+    const got = p.gifts.filter(g=>g.wrapped).length;
     const items = p.gifts.length ? p.gifts.map(g => `
-      <li class="${g.done?"got":""}">
-        <button class="check" role="checkbox" aria-checked="${g.done}" aria-label="Bought: ${esc(g.text)}" data-act="toggle" data-p="${p.id}" data-g="${g.id}">
-          <svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+      <li class="gift ${g.wrapped?"got":""}">
+        <div class="icons">${STEPS.map(([k,label]) =>
+          `<button class="ib${justTapped===g.id+k?" just":""}" role="checkbox" aria-checked="${!!g[k]}" aria-label="${label}: ${esc(g.text)}" title="${label}" data-act="step" data-k="${k}" data-p="${p.id}" data-g="${g.id}">${ICON[k](!!g[k])}</button>`).join("")}</div>
         <span class="gtext">${esc(g.text)}</span>
-        <button class="yearly" aria-pressed="${!!g.annual}" title="Gets this every year" data-act="annual" data-p="${p.id}" data-g="${g.id}">${g.annual?"Every year":"One-time"}</button>
+        <button class="yearly" aria-pressed="${!!g.annual}" title="Gets this every year" data-act="annual" data-p="${p.id}" data-g="${g.id}">${g.annual?"Yearly":"Once"}</button>
         <button class="x" aria-label="Delete ${esc(g.text)}" data-act="delgift" data-p="${p.id}" data-g="${g.id}">×</button>
       </li>`).join("") : `<li class="empty">No gift ideas yet.</li>`;
     const rm = p.group === "others"
@@ -403,7 +450,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
     return `<article class="card ${done?"done":""}">
       <div class="chead">
         <span class="cname">${esc(p.name)}</span>
-        <span class="count">${got}/${p.gifts.length}</span>
+        ${p.gifts.length ? `<span class="count">${got}/${p.gifts.length} wrapped</span>` : ""}
         ${done ? `<span class="pill">Done</span>` : ""}
       </div>
       <ul>${items}</ul>
@@ -433,7 +480,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
       <form class="addp"><input id="addperson" type="text" placeholder="Add a friend" aria-label="New friend" autocomplete="off"><button class="btn red" type="submit">Add friend</button></form>
     </section>`;
     html += `<section class="reset">
-      <div>Done for the year? Start next year's list: "Every year" gifts stay and get unchecked, one-time gifts are cleared.</div>
+      <div>Done for the year? Start next year's list: "Yearly" gifts stay and get unchecked, one-time gifts are cleared.</div>
       ${confirmReset
         ? `<div class="row"><button class="btn red" data-act="doreset">Yes, start next year</button><button class="btn ghost" data-act="cancelreset">Cancel</button></div>`
         : `<button class="btn ghost" data-act="askreset">Start next year's list</button>`}
@@ -449,24 +496,26 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
     const t = $("toast"); t.textContent = msg; t.classList.add("show");
     clearTimeout(toastT); toastT = setTimeout(()=>t.classList.remove("show"), 3200);
   }
-  function eat(name, final){
-    eatingUntil = Date.now() + 2700;
-    santa.classList.remove("napping","eating"); void santa.getBoundingClientRect(); santa.classList.add("eating");
-    $("caption").textContent = final ? `${name} is done, and so are you! Santa's eating the last cookie…` : `${name} is all set. Santa's having a cookie to celebrate!`;
-    toast(final ? "Shopping complete!" : `${name}: done!`);
-    setTimeout(()=>{ santa.classList.remove("eating"); eatingUntil = 0; updateTop(); }, 2750);
+  function celebrate(name, final){
+    toast(final ? "Everything's wrapped! The tree is lit." : `${name}: all wrapped!`);
+    if(!final){ tree.classList.remove("sway"); void tree.getBoundingClientRect(); tree.classList.add("sway"); setTimeout(()=>tree.classList.remove("sway"), 950); }
   }
 
   // ---------- actions ----------
   document.addEventListener("click", e => {
     const b = e.target.closest("[data-act]"); if(!b) return;
     const act = b.dataset.act, p = b.dataset.p && find(b.dataset.p);
-    if(act === "toggle" && p){
+    if(act === "step" && p){
+      justTapped = b.dataset.g + b.dataset.k; setTimeout(()=>{ justTapped = ""; }, 500);
       const g = p.gifts.find(x => x.id === b.dataset.g); if(!g) return;
       const was = isDone(p);
-      g.done = !g.done;
+      const i = STEPS.findIndex(s => s[0] === b.dataset.k);
+      if(g[b.dataset.k]) STEPS.slice(i).forEach(([k]) => g[k] = false);   // unchecking clears later steps
+      else STEPS.slice(0, i+1).forEach(([k]) => g[k] = true);           // checking fills earlier steps
+      g.done = !!g.wrapped;
       save();
-      if(!was && isDone(p)) eat(p.name, allDone());
+      if(!was && isDone(p)) celebrate(p.name, allDone());
+      else if(!was && allDone()) celebrate(p.name, true);
       render();
     } else if(act === "annual" && p){
       const g = p.gifts.find(x => x.id === b.dataset.g); if(!g) return;
@@ -479,7 +528,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
     else if(act === "askreset"){ confirmReset = true; render(); }
     else if(act === "cancelreset"){ confirmReset = false; render(); }
     else if(act === "doreset"){
-      state.people.forEach(pp => { pp.gifts = pp.gifts.filter(g => g.annual).map(g => ({...g, done:false})); });
+      state.people.forEach(pp => { pp.gifts = pp.gifts.filter(g => g.annual).map(g => ({...g, done:false, ordered:false, received:false, wrapped:false})); });
       confirmReset = false; save(); render(); toast("Fresh list. The cookies are back on the plate.");
     }
   });
@@ -491,7 +540,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
       state.people.push({id:uid(), name:text, group:"others", gifts:[]});
     } else {
       const p = find(f.dataset.p); if(!p) return;
-      p.gifts.push({id:uid(), text, done:false, annual:false});
+      p.gifts.push({id:uid(), text, done:false, ordered:false, received:false, wrapped:false, annual:false});
     }
     input.value = "";
     save(); render();
@@ -503,6 +552,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   const SEED = {"people": [{"id": "mom", "name": "Mom", "group": "family", "gifts": []}, {"id": "dad", "name": "Dad", "group": "family", "gifts": [{"id": "dad1", "text": "Puzzle", "done": false, "annual": true}]}, {"id": "kim", "name": "Kim", "group": "family", "gifts": []}, {"id": "andy", "name": "Andy", "group": "family", "gifts": []}, {"id": "alice", "name": "Alice", "group": "family", "gifts": [{"id": "al1", "text": "Ornament", "done": false, "annual": true}, {"id": "al2", "text": "Custom book", "done": false, "annual": true}]}, {"id": "kc", "name": "KC", "group": "family", "gifts": []}, {"id": "kris", "name": "Kris", "group": "family", "gifts": []}, {"id": "jo", "name": "Jo", "group": "family", "gifts": []}, {"id": "nathan", "name": "Nathan", "group": "family", "gifts": [{"id": "na1", "text": "Ornament", "done": false, "annual": true}, {"id": "na2", "text": "Custom book", "done": false, "annual": true}]}, {"id": "morgan", "name": "Morgan", "group": "others", "gifts": [{"id": "mo1", "text": "Ornament", "done": false, "annual": true}]}]};
   localMode = true; loaded = true;
   try{ const s = JSON.parse(localStorage.getItem("xmasList")||"null"); state = (s && s.people) ? s : SEED; }catch(e){ state = SEED; }
+  normalize();
   save();
   render();
 })();
