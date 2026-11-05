@@ -153,6 +153,20 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
 .grid .card .x{color:var(--on-card-soft)}
 .grid .card .x:hover{color:#ffffff;background:rgba(255,255,255,.15)}
 .grid .card .pill{background:#ffe08a;color:#3a2a00;text-shadow:none}
+.coalbtn{flex:none;width:34px;height:34px;padding:0;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;border-radius:10px;color:rgba(255,255,255,.75);transition:transform .15s}
+.coalbtn svg{width:26px;height:26px;overflow:visible}
+.coalbtn:active{transform:scale(.86)}
+.grid .card.naughty{--cbg:#2c2c31;--cbg2:#3b3b42;box-shadow:var(--shadow)}
+.card.naughty .cname{color:#d6d6dc}
+.card.naughty li{opacity:.4;filter:grayscale(1)}
+.card.naughty li button{pointer-events:none}
+.card.naughty .gtext{text-decoration:none}
+.grid .card .pill.naughty,.pill.naughty{background:#d5122f;color:#ffffff;border:1px solid #ff6b7d;display:inline-flex;align-items:center;gap:5px}
+.pill.naughty svg{width:15px;height:15px}
+.card.naughty .chead .coal-big{animation:thud .6s cubic-bezier(.3,1.5,.5,1)}
+@keyframes thud{0%{transform:translateY(-24px) scale(.5);opacity:0}60%{transform:translateY(2px) scale(1.15,.85);opacity:1}100%{transform:none}}
+.coal{transform-box:fill-box;transform-origin:50% 100%}
+.coal.new{animation:presIn .8s cubic-bezier(.3,1.2,.5,1)}
 .grid .card .add input{background:rgba(255,255,255,.14);border-color:var(--on-card-line);color:var(--on-card)}
 .grid .card .add input::placeholder{color:var(--on-card-soft)}
 .grid .card .add input:focus{border-color:#ffffff}
@@ -250,6 +264,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
           <g id="canes"></g>
         </g>
         <g id="presents"></g>
+        <g id="coal"></g>
         <polygon id="star" points=""/>
       </svg>
     </div>
@@ -278,7 +293,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   let writing = false, dirty = false;
   const confirmRemove = new Set();
   let confirmReset = false;
-  let justTapped = "";
+  let justTapped = "", justCoal = "";
   const $ = id => document.getElementById(id);
   const uid = () => Math.random().toString(36).slice(2,10);
   const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -291,7 +306,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
     }));
   }
   const isDone = p => p.gifts.length > 0 && p.gifts.every(g => g.wrapped);
-  const allDone = () => { const gs = state.people.flatMap(p => p.gifts); return gs.length > 0 && gs.every(g => g.wrapped); };
+  const allDone = () => { const gs = state.people.filter(p => !p.naughty).flatMap(p => p.gifts); return gs.length > 0 && gs.every(g => g.wrapped); };
   const find = id => state.people.find(p => p.id === id);
 
   // ---------- saving ----------
@@ -374,6 +389,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   const PRES_SLOTS = [[158,216,26,18],[186,216,22,15],[132,217,22,16],[214,217,24,19],[132,206,20,15],[208,206,22,14],[104,218,20,14],[242,218,22,16],[106,207,18,15],[236,207,20,17],[78,219,20,15],[268,219,20,13],[82,208,18,13],[262,208,18,14],[54,220,18,14],[290,220,18,15]];
   const PRES_COLORS = [["#d5122f","#f2c14e"],["#2f6dc2","#ffffff"],["#f2c14e","#d5122f"],["#8e44ad","#f2c14e"],["#ffffff","#d5122f"],["#1d8a4a","#ffd23f"]];
   let prev = null, treeKey = "";
+  const COAL_SPOTS = [[120,224],[220,225],[146,226],[194,226],[96,224],[246,224],[172,227],[70,223],[272,223]];
+  const lump = (x,y,sz) => { const k = sz/10;
+    const pts = [[-10,0],[-8,-6],[-3,-9],[4,-8],[9,-4],[10,0]].map(([a,b]) => `${(x+a*k).toFixed(1)},${(y+b*k).toFixed(1)}`).join(" ");
+    return `<polygon points="${pts}" fill="#1b1b1f" stroke="#000" stroke-width=".6"/><polygon points="${(x-3*k).toFixed(1)},${(y-9*k).toFixed(1)} ${(x+4*k).toFixed(1)},${(y-8*k).toFixed(1)} ${(x+1*k).toFixed(1)},${(y-4*k).toFixed(1)} ${(x-5*k).toFixed(1)},${(y-5*k).toFixed(1)}" fill="#4a4a52"/><circle cx="${(x+5*k).toFixed(1)}" cy="${(y-4*k).toFixed(1)}" r="${(0.9*k).toFixed(1)}" fill="#8a8a96"/>`; };
+  let prevCoal = null;
+  function drawCoal(c){
+    const was = prevCoal === null ? c : prevCoal;
+    $("coal").innerHTML = COAL_SPOTS.slice(0, c).map(([x,y],i) => `<g class="coal${i>=was?" new":""}">${lump(x,y,11)}</g>`).join("");
+    prevCoal = c;
+  }
   function drawTree(o, r, w, lit){
     const key = [o,r,w,lit].join(",");
     if(key === treeKey) return;
@@ -402,27 +427,30 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
   }
 
   function updateTop(){
-    const gifts = state.people.flatMap(p => p.gifts);
+    const nice = state.people.filter(p => !p.naughty), naughtyN = state.people.length - nice.length;
+    const gifts = nice.flatMap(p => p.gifts);
     const n = k => gifts.filter(g => g[k]).length;
     const o = n("ordered"), r = n("received"), w = n("wrapped");
     const pct = gifts.length ? Math.round((o+r+w)/(gifts.length*3)*100) : 0;
-    const peopleDone = state.people.filter(isDone).length;
+    const peopleDone = nice.filter(isDone).length;
     $("pct").textContent = pct + "%";
     $("pgifts").textContent = `${gifts.length} gift${gifts.length===1?"":"s"}`;
     $("legend").innerHTML = `<span>${ICON.ordered(true)}${o} ordered</span><span>${ICON.received(true)}${r} received</span><span>${ICON.wrapped(true)}${w} wrapped</span>`;
-    $("ppeople").textContent = `${peopleDone} of ${state.people.length} people done`;
+    $("ppeople").textContent = `${peopleDone} of ${nice.length} people done` + (naughtyN ? ` · ${naughtyN} on the naughty list` : "");
     $("fill").style.width = pct + "%";
     $("bar").setAttribute("aria-valuenow", pct);
     $("bar").classList.toggle("full", pct === 100);
     if(!loaded) return;
     const lit = allDone();
     drawTree(o, r, w, lit);
+    const coalN = state.people.filter(p => p.naughty).length;
+    if(coalN !== prevCoal) drawCoal(coalN);
     const extra = Math.max(0, o-ORN_SPOTS.length) + Math.max(0, r-CANE_SPOTS.length) + Math.max(0, w-PRES_SLOTS.length);
     const pl = (k, a, b) => `${k} ${k===1?a:b}`;
     let msg;
     if(!state.people.length) msg = "Add someone to start your list.";
     else if(lit){
-      const none = state.people.filter(p => !p.gifts.length).map(p => p.name);
+      const none = state.people.filter(p => !p.naughty && !p.gifts.length).map(p => p.name);
       msg = "Every gift is wrapped. The tree is lit!" + (none.length ? ` Still no gift ideas for ${none.join(", ")}.` : "");
     }
     else if(!gifts.length) msg = "Add gift ideas to start decorating the tree.";
@@ -431,8 +459,11 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
     $("caption").textContent = msg;
   }
 
+  const COAL_ICON = on => on
+    ? `<svg viewBox="0 0 28 28"><polygon points="3,22 6,13 12,8 19,9 25,15 24,22" fill="#1b1b1f" stroke="#000" stroke-width=".8"/><polygon points="12,8 19,9 16,14 9,14" fill="#4a4a52"/><polygon points="19,9 25,15 20,16 16,14" fill="#35353c"/><circle cx="21" cy="12" r="1.1" fill="#9a9aa6"/><circle cx="8" cy="17" r=".8" fill="#9a9aa6"/></svg>`
+    : `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><polygon points="3,22 6,13 12,8 19,9 25,15 24,22"/><path d="M12 8 L9 14 L16 14 L19 9 M16 14 L20 16 L25 15" stroke-width="1.2" opacity=".7"/></svg>`;
   function card(p){
-    const done = isDone(p);
+    const done = isDone(p) && !p.naughty;
     const got = p.gifts.filter(g=>g.wrapped).length;
     const items = p.gifts.length ? p.gifts.map(g => `
       <li class="gift ${g.wrapped?"got":""}">
@@ -447,11 +478,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
           ? `<div class="add" style="justify-content:flex-end"><button class="btn ghost" data-act="cancelrm" data-p="${p.id}">Keep</button><button class="btn red" data-act="rmperson" data-p="${p.id}">Remove ${esc(p.name)}</button></div>`
           : `<button class="rm" data-act="askrm" data-p="${p.id}">Remove ${esc(p.name)}</button>`)
       : "";
-    return `<article class="card ${done?"done":""}">
+    return `<article class="card ${done?"done":""} ${p.naughty?"naughty":""}">
       <div class="chead">
         <span class="cname">${esc(p.name)}</span>
-        ${p.gifts.length ? `<span class="count">${got}/${p.gifts.length} wrapped</span>` : ""}
+        ${p.naughty ? `<span class="pill naughty${justCoal===p.id?" coal-big":""}">${COAL_ICON(true)}Naughty</span>`
+          : (p.gifts.length ? `<span class="count">${got}/${p.gifts.length} wrapped</span>` : "")}
         ${done ? `<span class="pill">Done</span>` : ""}
+        <button class="coalbtn" aria-pressed="${!!p.naughty}" aria-label="${p.naughty?"Take "+esc(p.name)+" off the naughty list":"Put "+esc(p.name)+" on the naughty list"}" title="${p.naughty?"Back to nice":"Naughty list"}" data-act="coal" data-p="${p.id}">${COAL_ICON(!!p.naughty)}</button>
       </div>
       <ul>${items}</ul>
       <form class="add" data-p="${p.id}">
@@ -517,6 +550,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
       if(!was && isDone(p)) celebrate(p.name, allDone());
       else if(!was && allDone()) celebrate(p.name, true);
       render();
+    } else if(act === "coal" && p){
+      p.naughty = !p.naughty; justCoal = p.naughty ? p.id : ""; setTimeout(()=>{ justCoal = ""; }, 700);
+      save(); render();
+      toast(p.naughty ? `${p.name} is on the naughty list!` : `${p.name} is back on the nice list.`);
     } else if(act === "annual" && p){
       const g = p.gifts.find(x => x.id === b.dataset.g); if(!g) return;
       g.annual = !g.annual; save(); render();
@@ -528,7 +565,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-o
     else if(act === "askreset"){ confirmReset = true; render(); }
     else if(act === "cancelreset"){ confirmReset = false; render(); }
     else if(act === "doreset"){
-      state.people.forEach(pp => { pp.gifts = pp.gifts.filter(g => g.annual).map(g => ({...g, done:false, ordered:false, received:false, wrapped:false})); });
+      state.people.forEach(pp => { pp.naughty = false; pp.gifts = pp.gifts.filter(g => g.annual).map(g => ({...g, done:false, ordered:false, received:false, wrapped:false})); });
       confirmReset = false; save(); render(); toast("Fresh list. The cookies are back on the plate.");
     }
   });
